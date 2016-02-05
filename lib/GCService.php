@@ -8,7 +8,7 @@ class GCService
 {
     private static $instance;
     
-    private function __construct() 
+    private function __construct()
     {
         
     }
@@ -17,7 +17,7 @@ class GCService
      * Get an instance of service. There is axactly one instance of this class
      * in the application context.
      */
-    static public function instance()
+    public static function instance()
     {
         if (is_null(self::$instance)) {
             self::$instance = new GCService();
@@ -26,12 +26,13 @@ class GCService
         return self::$instance;
     }
     
-    private function setExceptionHandler() 
+    private function setExceptionHandler()
     {
         $handler = function (Exception $e) {
             print_debug(
                 $e->getMessage() . "\n" . $e->getTraceAsString(),
-                null, 'service'
+                null,
+                'service'
             );
             header("HTTP/1.0 500 Internal Server Error");
             echo $e->getMessage();
@@ -40,7 +41,7 @@ class GCService
         set_exception_handler($handler);
     }
     
-    public function startSession($allowTokenFromRequest = false) 
+    public function startSession($allowTokenFromRequest = false)
     {
         // for PHP >= 5.4, see http://php.net/manual/en/function.session-status.php
         if (session_id() === '') {
@@ -59,5 +60,4 @@ class GCService
             print_debug('session already started', null, 'system');
         }
     }
-
 }
