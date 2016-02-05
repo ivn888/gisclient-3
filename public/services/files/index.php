@@ -1,5 +1,5 @@
 <?php
-include_once "../../../config/config.php";
+require_once "../../../config/config.php";
 require_once ROOT_PATH . 'lib/GCService.php';
 
 $gcService = GCService::instance();
@@ -32,6 +32,7 @@ die();
 
 /**
  * Return the mime type of a file
+ *
  * @param string       the file extension
  * @param array        options. Valid parameters are:
  *                       format:   output format. Default calculated from file extension
@@ -41,7 +42,8 @@ die();
  *
  * @return boolea      return true on success
  */
-function getMimeFromFileExt($ext) {
+function getMimeFromFileExt($ext) 
+{
 
     $mimes = array(
         'application/pdf' => 'pdf',
@@ -101,6 +103,7 @@ function getMimeFromFileExt($ext) {
 
 /**
  * Deliver the specified file
+ *
  * @param string       the file to delivery
  * @param array        options. Valid parameters are:
  *                       format:       output format. Default calculated from file extension
@@ -115,7 +118,8 @@ function getMimeFromFileExt($ext) {
  *
  * @return boolea      return true on success
  */
-function deliverFile($fileName, $opt=array()) {
+function deliverFile($fileName, $opt=array()) 
+{
 
     $defaultOpt = array(
         'format' => '',
@@ -200,12 +204,12 @@ function deliverFile($fileName, $opt=array()) {
         header($opt['header']);
     }
 
-	//SS: Removed because of error flush();
-	
+    //SS: Removed because of error flush();
+    
     // read file faild on big files
     //readfile($fileName);
 
-    if (($handle = fopen($fileName, 'rb')) === FALSE) {
+    if (($handle = fopen($fileName, 'rb')) === false) {
         throw new Exception("Could not open $fileName");
     }
     $buffer = '';

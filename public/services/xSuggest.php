@@ -1,6 +1,6 @@
 <?php
 
-require_once('../../config/config.php');
+require_once '../../config/config.php';
 require_once ROOT_PATH.'lib/ajax.class.php';
 $ajax = new GCAjax();
 
@@ -66,7 +66,7 @@ if(!empty($field["relation_id"])) {//il campo oggetto di autosuggest è su tabel
     if($field["data_field_1"] && $field["table_field_1"]) $joinList[] = DATALAYER_ALIAS_TABLE.".".$field["data_field_1"]."=\"".$field["relation_name"]."\".".$field["table_field_1"];
     if($field["data_field_2"] && $field["table_field_2"]) $joinList[] = DATALAYER_ALIAS_TABLE.".".$field["data_field_2"]."=\"".$field["relation_name"]."\".".$field["table_field_2"];
     if($field["data_field_3"] && $field["table_field_3"]) $joinList[] = DATALAYER_ALIAS_TABLE.".".$field["data_field_3"]."=\"".$field["relation_name"]."\".".$field["table_field_3"];
-    $joinFields = implode(" AND ",$joinList);
+    $joinFields = implode(" AND ", $joinList);
     $joinString .= " inner join ". $field["schema"].".".$field["table_name"]." as ". $field["relation_name"]." on ($joinFields) ";
     $sqlQuery = "SELECT DISTINCT ". $fieldName ." as value FROM " .$joinString;
 } else { //caso elementare: il campo è su tabella del layer

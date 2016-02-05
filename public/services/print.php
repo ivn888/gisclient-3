@@ -16,26 +16,26 @@ if (($data = json_decode($inputJSONText, true)) !== null) {
 $ajax = new GCAjax();
 
 if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'PDF') {
-	if(!file_exists(GC_FOP_LIB)) $ajax->error('fop lib does not exist');
-	require_once GC_FOP_LIB;
+    if(!file_exists(GC_FOP_LIB)) $ajax->error('fop lib does not exist');
+    include_once GC_FOP_LIB;
 }
 
 try {
     $printMap = new printDocument();
 
-	if(!empty($_REQUEST['request_type']) && $_REQUEST['request_type'] == 'get-box') {
-		$box = $printMap->getBox();
-		$pages = $printMap->getDimensions();
-		$ajax->success(array('box'=>$box, 'pages'=>$pages));
-	}
+    if(!empty($_REQUEST['request_type']) && $_REQUEST['request_type'] == 'get-box') {
+        $box = $printMap->getBox();
+        $pages = $printMap->getDimensions();
+        $ajax->success(array('box'=>$box, 'pages'=>$pages));
+    }
 
-	if(!empty($_REQUEST['lang'])) {
-		$printMap->setLang($_REQUEST['lang']);
-	}
+    if(!empty($_REQUEST['lang'])) {
+        $printMap->setLang($_REQUEST['lang']);
+    }
     if(!empty($_REQUEST['logoSx'])) $printMap->setLogo($_REQUEST['logoSx']);
-	else if(defined('GC_PRINT_LOGO_SX')) $printMap->setLogo(GC_PRINT_LOGO_SX);
+    else if(defined('GC_PRINT_LOGO_SX')) $printMap->setLogo(GC_PRINT_LOGO_SX);
     if(!empty($_REQUEST['logoDx'])) $printMap->setLogo($_REQUEST['logoDx'], 'dx');
-	else if(defined('GC_PRINT_LOGO_DX')) $printMap->setLogo(GC_PRINT_LOGO_DX, 'dx');
+    else if(defined('GC_PRINT_LOGO_DX')) $printMap->setLogo(GC_PRINT_LOGO_DX, 'dx');
 
     if ($_REQUEST['format'] == 'HTML') {
         $file = $printMap->printMapHTML();
@@ -44,6 +44,6 @@ try {
         $file = $printMap->printMapPDF();
     }
 } catch (Exception $e) {
-	$ajax->error($e->getMessage());
+    $ajax->error($e->getMessage());
 }
 $ajax->success(array('file'=>$file, 'format'=>$_REQUEST['format']));

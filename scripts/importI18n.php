@@ -1,11 +1,11 @@
 <?php
-include __DIR__ .'/../config/config.php';
+require __DIR__ .'/../config/config.php';
 
 $project = ''; //inserire il nome di un progetto se ci sono più progetti
 
 echo "\n\ninizio... \n\n";
 
-set_time_limit ( 5*60 );
+set_time_limit(5*60);
 
 $db = GCApp::getDB();
 
@@ -47,12 +47,14 @@ foreach($traduzioni as $row) {
         }
         $localization_id = $db->query("select ".DB_SCHEMA.".new_pkey('localization', 'localization_id') ")->fetchColumn(0);
         
-        $checkStmt->execute(array(
+        $checkStmt->execute(
+            array(
             'project'=>$project,
             'i18nfid'=>$i18nfid,
             'pkey'=>$trad[$pkey],
             'lang'=>$row['language_id']
-        ));
+            )
+        );
         $check = $checkStmt->fetchAll(PDO::FETCH_ASSOC);
         if(count($check) > 1) {
             echo " casino... c'è già più di una traduzione per lo stesso record....\n\n";
@@ -66,14 +68,16 @@ foreach($traduzioni as $row) {
             continue;
         }
         
-        $insertStmt->execute(array(
+        $insertStmt->execute(
+            array(
             'localization_id' => $localization_id,
             'project'=>$project,
             'i18nfid'=>$i18nfid,
             'pkey'=>$trad[$pkey],
             'lang'=>$row['language_id'],
             'val'=>$row['value']
-        ));
+            )
+        );
         $n2++;
     }
     $n1++;

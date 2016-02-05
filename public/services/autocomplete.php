@@ -14,9 +14,9 @@ $ajax = new GCAjax();
 $db = GCApp::getDB();
 
 if(empty($_REQUEST['field_id']) || !is_numeric($_REQUEST['field_id']) || (int)$_REQUEST['field_id'] != $_REQUEST['field_id']) {
-	$ajax->error('Undefined field_id');
+    $ajax->error('Undefined field_id');
 } else {
-	$fieldId = (int)$_REQUEST['field_id'];
+    $fieldId = (int)$_REQUEST['field_id'];
 }
 
 $lang = !empty($_REQUEST['lang']) ? $db->quote($_REQUEST['lang']) : null;
@@ -26,7 +26,7 @@ $stmt = $db->prepare($sql);
 $stmt->execute(array('id'=>$fieldId));
 $field = $stmt->fetch(PDO::FETCH_ASSOC);
 if(empty($field)) {
-	$ajax->error('Field '.$fieldId.' does not exists');
+    $ajax->error('Field '.$fieldId.' does not exists');
 }
 $isLayer = true;
 
@@ -43,8 +43,8 @@ if(!empty($field['relation_id'])) {
 $stmt = $db->prepare($sql);
 $stmt->execute($params);
 $catalog = $stmt->fetch(PDO::FETCH_ASSOC);
-if(empty($catalog)){
-	$ajax->error('No catalog found for layer_id '. $field['layer_id']);
+if(empty($catalog)) {
+    $ajax->error('No catalog found for layer_id '. $field['layer_id']);
 }
 
 if($lang) {
@@ -55,11 +55,13 @@ if($lang) {
     if($i18nFieldId) {
         $sql = 'select value from '.DB_SCHEMA.'.localization where i18nf_id=:i18nf_id and pkey_id=:pkey and language_id=:lang';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array(
+        $stmt->execute(
+            array(
             'i18nf_id'=>$i18nFieldId,
             'pkey'=>$field['field_id'],
             'lang'=>$lang
-        ));
+            )
+        );
         $localized = $stmt->fetchColumn(0);
         if($localized) {
             $field['field_name'] = $localized;
@@ -76,9 +78,9 @@ $params = array();
 $fieldName = $field['field_name'];
 $alias = 'aliastable';
 if($isLayer) {
-	if(!empty($catalog['data_filter'])) {
-		array_push($constraints, '('.$catalog['data_filter'].')');
-	}
+    if(!empty($catalog['data_filter'])) {
+        array_push($constraints, '('.$catalog['data_filter'].')');
+    }
 } else {
     $alias = $catalog['alias'];
     $fieldName = $field['formula'];
@@ -89,12 +91,12 @@ if(!empty($_REQUEST['filter'])) {
     $params['filter'] = '%'.$_REQUEST['filter'].'%';
 }
 if (!empty($_REQUEST['do_id'])) {
-	if (!is_numeric($_REQUEST['do_id']) || (int) $_REQUEST['do_id'] != $_REQUEST['do_id']) {
-		$ajax->error('invalid value of do_id');
-	} else {
-		array_push($constraints, ' do_id = :do_id ');
-		$params['do_id'] = (int) $_REQUEST['do_id'];
-	}
+    if (!is_numeric($_REQUEST['do_id']) || (int) $_REQUEST['do_id'] != $_REQUEST['do_id']) {
+        $ajax->error('invalid value of do_id');
+    } else {
+        array_push($constraints, ' do_id = :do_id ');
+        $params['do_id'] = (int) $_REQUEST['do_id'];
+    }
 }
 $sql = 'select distinct '.$fieldName.' from '.$schema.'.'.$catalog['table'].' as '.$alias;
 if(!empty($constraints)) {

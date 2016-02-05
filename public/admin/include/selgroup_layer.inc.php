@@ -28,14 +28,16 @@ try {
     if($stmt->rowCount() > 0) {
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if($this->mode!=0 || $row['presente']==1) {
-                array_push($data, array(
+                array_push(
+                    $data, array(
                     'theme_title'=>$row['theme_title'],
                     'selgroup_id'=>$row['selgroup_id'],
                     'layer_id'=>$row['layer_id'],
                     'presente'=>$row['presente'],
                     'layer_name'=>$row['layer_name'],
                     'layergroup_name'=>$row['layergroup_name']
-                ));
+                    )
+                );
             }
         }
     } else {

@@ -1,8 +1,8 @@
 <?php
 
-require_once('../../config/config.php');
-require_once (ROOT_PATH.'lib/functions.php');
-require_once(ROOT_PATH.'lib/gcPgQuery.class.php');//Definizione dell'oggetto PgQuery
+require_once '../../config/config.php';
+require_once ROOT_PATH.'lib/functions.php';
+require_once ROOT_PATH.'lib/gcPgQuery.class.php';//Definizione dell'oggetto PgQuery
 
 $db = GCApp::getDB();
 
@@ -16,11 +16,13 @@ $stmt = $db->prepare($sql);
 
 list($layergroupName, $layerName) = explode('.', $_REQUEST['featureType']);
 
-$stmt->execute(array(
+$stmt->execute(
+    array(
     'mapset_name'=>$_REQUEST['mapsetName'],
     'layergroup_name'=>$layergroupName,
     'layer_name'=>$layerName
-));
+    )
+);
 
 $request['layer_id'] = $stmt->fetchColumn(0);
 
@@ -59,7 +61,7 @@ $_SESSION["MAPSET_reti_grg_tb"] = array(
     "SRID" => 900913,
     "MAPSET_EXTENT" => array (954497,5498871,1068173,5571752),
     "MAP_EXTENT" => array (1016504.94242,5534712.73231,1017133.64423,5535298.5995),
- 	"GROUPS_ON" => array(231)
+     "GROUPS_ON" => array(231)
 );
 
 
@@ -77,34 +79,34 @@ $_REQUEST = array(
 
 
 //scelta da menu radio
-define('QUERY_EXTENT',0);
-define('QUERY_WINDOW',1);
-define('QUERY_CURRENT',2);
-define('QUERY_RESULT',3);
+define('QUERY_EXTENT', 0);
+define('QUERY_WINDOW', 1);
+define('QUERY_CURRENT', 2);
+define('QUERY_RESULT', 3);
 //selezione sulla mappa
-define('QUERY_POINT',5);
-define('QUERY_POLYGON',6);
-define('QUERY_CIRCLE',7);
+define('QUERY_POINT', 5);
+define('QUERY_POLYGON', 6);
+define('QUERY_CIRCLE', 7);
 
-define('OBJ_POINT',1);
-define('OBJ_CIRCLE',2);
-define('OBJ_POLYGON',3);
+define('OBJ_POINT', 1);
+define('OBJ_CIRCLE', 2);
+define('OBJ_POLYGON', 3);
 
-define('AND_CONST','&&');
-define('OR_CONST','||');
-define('LT_CONST','<');
-define('LE_CONST','<=');
-define('GT_CONST','>');
-define('GE_CONST','>=');
-define('NEQ_CONST','!=');
-define('JOLLY_CHAR','*');
+define('AND_CONST', '&&');
+define('OR_CONST', '||');
+define('LT_CONST', '<');
+define('LE_CONST', '<=');
+define('GT_CONST', '>');
+define('GE_CONST', '>=');
+define('NEQ_CONST', '!=');
+define('JOLLY_CHAR', '*');
 
-define('STANDARD_FIELD_TYPE',1);
-define('LINK_FIELD_TYPE',2);
-define('EMAIL_FIELD_TYPE',3);
-define('HEADER_GROUP_TYPE',10);
-define('IMAGE_FIELD_TYPE',8);
-define('SECONDARY_FIELD_LINK',99);
+define('STANDARD_FIELD_TYPE', 1);
+define('LINK_FIELD_TYPE', 2);
+define('EMAIL_FIELD_TYPE', 3);
+define('HEADER_GROUP_TYPE', 10);
+define('IMAGE_FIELD_TYPE', 8);
+define('SECONDARY_FIELD_LINK', 99);
 
 /* 
 define('SUM_FIELD_TYPE',6);
@@ -112,26 +114,26 @@ define('COUNT_FIELD_TYPE',7);
 define('AVG_FIELD_TYPE',8);
 */
 
-define('RESULT_TYPE_SINGLE',1);
-define('RESULT_TYPE_TABLE',2);
-define('RESULT_TYPE_ALL',3);
-define('RESULT_TYPE_NONE',4);
+define('RESULT_TYPE_SINGLE', 1);
+define('RESULT_TYPE_TABLE', 2);
+define('RESULT_TYPE_ALL', 3);
+define('RESULT_TYPE_NONE', 4);
 
-define('ONE_TO_ONE_RELATION',1);
-define('ONE_TO_MANY_RELATION',2);
+define('ONE_TO_ONE_RELATION', 1);
+define('ONE_TO_MANY_RELATION', 2);
 
-define('AGGREGATE_NULL_VALUE',' ');
+define('AGGREGATE_NULL_VALUE', ' ');
 
-define('ORDER_FIELD_ASC',1);
-define('ORDER_FIELD_DESC',2);
+define('ORDER_FIELD_ASC', 1);
+define('ORDER_FIELD_DESC', 2);
 
 
 
 //Definizione dell'oggetto GCMap
 //configurazione del sistema
-require_once('../../config/config.php');
-require_once (ROOT_PATH.'lib/functions.php');
-require_once(ROOT_PATH.'lib/gcPgQuery.class.php');//Definizione dell'oggetto PgQuery
+require_once '../../config/config.php';
+require_once ROOT_PATH.'lib/functions.php';
+require_once ROOT_PATH.'lib/gcPgQuery.class.php';//Definizione dell'oggetto PgQuery
 
 $jsObject = array();
 $oQuery=new PgQuery();
@@ -140,27 +142,27 @@ $oQuery=new PgQuery();
 
 
 
-if(isset($_REQUEST["printTable"]) && $_REQUEST["printTable"]==1){
-	$dataQuery = $oQuery->allQueryResults[0];
-	$updateMap = 0;//da vedere se aggiungere al pdf la mappa con la selezione
-	if(isset($_REQUEST["destination"]) && $_REQUEST["destination"]=='pdf') 
-		$printPdfTable = 1;
-	elseif(isset($_REQUEST["destination"]) && $_REQUEST["destination"]=='xls') 
-		$printXLSTable = 1;//$printCSVTable = 1;
-	else{
-		$jsObject["resultype"] = 2;
-		$jsObject['queryresult'] = $oQuery->allQueryResults;
-	}
+if(isset($_REQUEST["printTable"]) && $_REQUEST["printTable"]==1) {
+    $dataQuery = $oQuery->allQueryResults[0];
+    $updateMap = 0;//da vedere se aggiungere al pdf la mappa con la selezione
+    if(isset($_REQUEST["destination"]) && $_REQUEST["destination"]=='pdf') 
+    $printPdfTable = 1;
+    elseif(isset($_REQUEST["destination"]) && $_REQUEST["destination"]=='xls') 
+    $printXLSTable = 1;//$printCSVTable = 1;
+    else{
+        $jsObject["resultype"] = 2;
+        $jsObject['queryresult'] = $oQuery->allQueryResults;
+    }
 }
 else{
-	$jsObject["resultype"] = intval($_REQUEST["resultype"]);
-	$jsObject['queryresult'] = $oQuery->allQueryResults;
-	$updateMap = $oQuery->mapToUpdate;//valore che indica se devo o meno aggiornare la mappa
+    $jsObject["resultype"] = intval($_REQUEST["resultype"]);
+    $jsObject['queryresult'] = $oQuery->allQueryResults;
+    $updateMap = $oQuery->mapToUpdate;//valore che indica se devo o meno aggiornare la mappa
 }
 
 
-	
-	//Se non ci sono errori setto il controllo a 0
-	if(empty($jsObject['error'])) $jsObject['error']=0;	
-	jsonString($jsObject);
+    
+    //Se non ci sono errori setto il controllo a 0
+    if(empty($jsObject['error'])) $jsObject['error']=0;    
+    jsonString($jsObject);
 ?>

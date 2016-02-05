@@ -663,4 +663,3 @@ input {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt}
 <img id="sliderarrow" SRC="arrow.gif" STYLE="position:absolute; left:0px; top:0px">
 </body>
 </html>
-

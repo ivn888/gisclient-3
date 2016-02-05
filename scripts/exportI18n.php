@@ -1,10 +1,11 @@
 <?php
-include __DIR__ .'/../config/config.php';
+require __DIR__ .'/../config/config.php';
 
 $db = GCApp::getDB();
 
 if(!GCApp::tableExists($db, DB_SCHEMA, 'export_i18n')) {
-    $db->exec('
+    $db->exec(
+        '
         create table '.DB_SCHEMA.'.export_i18n (
             exporti18n_id serial,
             table_name character varying,
@@ -16,7 +17,8 @@ if(!GCApp::tableExists($db, DB_SCHEMA, 'export_i18n')) {
             original_value text,
             CONSTRAINT export_i18n_pkey PRIMARY KEY (exporti18n_id)
         );
-    ');
+    '
+    );
 } else {
     $db->exec('truncate table '.DB_SCHEMA.'.export_i18n');
 }
@@ -39,7 +41,8 @@ foreach($db->query($sql, PDO::FETCH_ASSOC) as $row) {
     $stmt->execute(array('val'=>$row['pkey_id']));
     $result = $stmt->fetchColumn(0);
     if(!empty($result)) {
-        $insertStmt->execute(array(
+        $insertStmt->execute(
+            array(
             'table'=>$row['table_name'],
             'field'=>$row['field_name'],
             'project'=>$row['project_name'],
@@ -47,6 +50,7 @@ foreach($db->query($sql, PDO::FETCH_ASSOC) as $row) {
             'lang'=>$row['language_id'],
             'val'=>trim($row['value']),
             'orig_val'=>$result
-        ));
+            )
+        );
     }
 }

@@ -39,9 +39,9 @@
 <body>
 <div id="container_login">
 	<div class="ui-layout-north">
-		<?php
-		include ADMIN_PATH."inc/inc.admin.page_header.php";
-		?>
+    <?php
+    require ADMIN_PATH."inc/inc.admin.page_header.php";
+    ?>
 	</div>
 	<div class="ui-layout-center">
 		<h2>Accesso consentito agli utenti autorizzati.</h2>

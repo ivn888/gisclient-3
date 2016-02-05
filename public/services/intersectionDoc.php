@@ -92,10 +92,12 @@ $features = $_REQUEST['features'];
 $sql = 'select st_geomfromtext(:geom, :srid)';
 $getGeom = $db->prepare($sql);
 foreach($features as $key => &$feature) {
-    $getGeom->execute(array(
+    $getGeom->execute(
+        array(
         'geom'=>$feature['the_geom'],
         'srid'=>$_REQUEST['srid']
-    ));
+        )
+    );
     $feature['the_geom'] = $getGeom->fetchColumn(0);
     $feature['intersections'] = array();
     $assign['table']['rows'][$key] = $feature;
@@ -105,9 +107,9 @@ unset($feature);
 $minIntersectionArea = !empty($docOptions['minIntersectionArea']) ? (float)$docOptions['minIntersectionArea'] : 0;
 
 foreach($_REQUEST['intersections'] as $intersection) {
-	if ($intersection['checked'] == 'false') {
-		continue;
-	}
+    if ($intersection['checked'] == 'false') {
+        continue;
+    }
     $sql = 'select st_area(st_intersection(the_geom, :geom)) / st_area(:geom) as intersection_ratio, '.$intersection['artField'].' as art_field, '.$intersection['descField'].' as desc_field from '.$dbParams['schema'].'.'.$intersection['tableName'].' where st_intersects(the_geom, :geom) ';
     if(!empty($intersection['areaOnly'])) $sql .= ' and st_area(st_intersection(the_geom, :geom)) > '.$minIntersectionArea.' ';
     $intersectStmt = $db->prepare($sql);
@@ -200,7 +202,7 @@ if($groupBy) {
 // TBS
 
 require_once ROOT_PATH . 'lib/external/tbs_class.php'; // TinyButStrong template engine
-include_once ROOT_PATH . 'lib/external/tbs_plugin_opentbs.php';
+require_once ROOT_PATH . 'lib/external/tbs_plugin_opentbs.php';
 
 
 $TBS = new clsTinyButStrong; // new instance of TBS
@@ -219,7 +221,7 @@ if($groupBy) {
 $TBS->MergeField('arts', $assign['arts']);
 
 
-$filename = $docOptions['filename'].rand(0,1000000).'.docx';
+$filename = $docOptions['filename'].rand(0, 1000000).'.docx';
 
 $TBS->Show(OPENTBS_FILE, GC_WEB_TMP_DIR.$filename);
 //FINE TBS

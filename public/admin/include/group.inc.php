@@ -1,12 +1,12 @@
 <?php
 require_once "../../config/config.php";
 
-	$groupname = (isset($this->parametri["groups"]))?$this->parametri["groups"]:array();
+    $groupname = (isset($this->parametri["groups"]))?$this->parametri["groups"]:array();
     
-    if(!empty($groupname)) {
-        if(!isset($data) || !is_array($data)) $data = array();
-        array_push($data, GCUser::getGroupData($groupname));
-    }
+if(!empty($groupname)) {
+    if(!isset($data) || !is_array($data)) $data = array();
+    array_push($data, GCUser::getGroupData($groupname));
+}
     if(empty($data)) $msg = "Nessun Utente definito";
     
     
@@ -26,7 +26,7 @@ require_once "../../config/config.php";
 		$msg="Nessun Gruppo definito";
 	} */
 
-	$btn[] = '<button name="azione" class="hexfield" type="submit" value="annulla">'.GCAuthor::t('button_cancel').'</button>';
-	$btn[] = '<button name="azione" class="hexfield" type="submit" value="salva">'.GCAuthor::t('button_save').'</button>';
-	$button=($this->currentMode=='view')?("modifica"):("nuovo");
+    $btn[] = '<button name="azione" class="hexfield" type="submit" value="annulla">'.GCAuthor::t('button_cancel').'</button>';
+    $btn[] = '<button name="azione" class="hexfield" type="submit" value="salva">'.GCAuthor::t('button_save').'</button>';
+    $button=($this->currentMode=='view')?("modifica"):("nuovo");
 ?>

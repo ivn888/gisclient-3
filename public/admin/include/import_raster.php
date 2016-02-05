@@ -18,25 +18,25 @@ try {
 }
 
 if($ris) {
-	$optCatalog[]="<option value=\"0\">Seleziona ===></option>";
-	foreach($ris as $val) $optCatalog[]="<option value=\"$val[catalog_id]\">$val[name]</option>";
+    $optCatalog[]="<option value=\"0\">Seleziona ===></option>";
+    foreach($ris as $val) $optCatalog[]="<option value=\"$val[catalog_id]\">$val[name]</option>";
 }
 
-$ext=explode(",",CATALOG_EXT);
+$ext=explode(",", CATALOG_EXT);
 foreach($ext as $e){
-	if($e!="SHP") $extension[]=$e;
+    if($e!="SHP") $extension[]=$e;
 }
 
-if($_POST["importa"]){
-	include ADMIN_PATH."lib/export.php";
-	extract($_POST);
-	if(!$srid) $srid=-1;
-	$error=import_raster($rasterdir,$extension,$objId,$catalog_id,$srid,$filtro,$delete);
-	if (!$error) echo "<p>Procedura di importazione Terminata Correttamente.</p>";
-	else{
-		$mex="<ul><li>".implode("</li><li>",$error)."</li></ul>";
-		echo $mex;
-	}
+if($_POST["importa"]) {
+    include ADMIN_PATH."lib/export.php";
+    extract($_POST);
+    if(!$srid) $srid=-1;
+    $error=import_raster($rasterdir, $extension, $objId, $catalog_id, $srid, $filtro, $delete);
+    if (!$error) echo "<p>Procedura di importazione Terminata Correttamente.</p>";
+    else{
+        $mex="<ul><li>".implode("</li><li>", $error)."</li></ul>";
+        echo $mex;
+    }
 }
 ?>
 <script>
@@ -58,7 +58,7 @@ function annulla(){
 		<td width="200px" bgColor="#728bb8"><font color="#FFFFFF"><b>Catalogo</b></font></td>
 		<td valign="middle">
 			<SELECT class="textbox" name="catalog_id" id="catalog_id">
-				<?php echo @implode('\n',$optCatalog);?>
+				<?php echo @implode('\n', $optCatalog);?>
 			</SELECT>
 		</td>
 	</tr>

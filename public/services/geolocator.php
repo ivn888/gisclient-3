@@ -9,28 +9,28 @@ $gcService->startSession();
 $ajax = new GCAjax();
 
 if(empty($GEOLOCATOR_CONFIG)) {
-	$ajax->error('Missing geolocator configuration');
-}	
+    $ajax->error('Missing geolocator configuration');
+}    
 
 if(empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('search', 'get-geom'))) {
-	$ajax->error('Invalid action');
+    $ajax->error('Invalid action');
 }
 
 if(empty($_REQUEST['mapset'])) {
-	$ajax->error('Undefined mapset');
+    $ajax->error('Undefined mapset');
 }
 $mapset = $_REQUEST['mapset'];
 if(!empty($_REQUEST['lang'])) {
-	$mapset = "{$mapset}_{$_REQUEST['lang']}";
-	if(empty($GEOLOCATOR_CONFIG[$mapset])) {
-		// language mapset configuration not available
-		$mapset = $_REQUEST['mapset'];  
-	}
+    $mapset = "{$mapset}_{$_REQUEST['lang']}";
+    if(empty($GEOLOCATOR_CONFIG[$mapset])) {
+        // language mapset configuration not available
+        $mapset = $_REQUEST['mapset'];  
+    }
 }
 
 if(empty($GEOLOCATOR_CONFIG[$mapset])) {
-	$ajax->error("Missing geolocator configuration \"{mapset}\"");
-}	
+    $ajax->error("Missing geolocator configuration \"{mapset}\"");
+}    
 $config = $GEOLOCATOR_CONFIG[$mapset];
 
 $db = GCApp::getDB();
@@ -40,7 +40,7 @@ $stmt = $db->prepare($sql);
 $stmt->execute(array('name'=>$config['catalogname']));
 $catalogPath = $stmt->fetchColumn(0);
 if (empty($catalogPath)) {
-	$ajax->error("Invalid catalog name \"{$config['catalogname']}\" in configuration");
+    $ajax->error("Invalid catalog name \"{$config['catalogname']}\" in configuration");
 }
 $dataDb = GCApp::getDataDB($catalogPath);
 

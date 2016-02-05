@@ -33,7 +33,8 @@
 
 
 
-class gcFeature {
+class gcFeature
+{
 
     var $msFeatureType = array();
     var $aggregateFunction = array(101 => 'sum', 102 => 'avg', 103 => 'min', 104 => 'max', 105 => 'count', 106 => 'variance', 107 => 'stddev');
@@ -56,18 +57,21 @@ class gcFeature {
      */
     private $aFeature;
 
-    function __destruct() {
+    function __destruct() 
+    {
         unset($this->aFeature);
         unset($this->mapError);
     }
 
-    function __construct($i18n = null) {
+    function __construct($i18n = null) 
+    {
         $this->db = GCApp::getDB();
         $this->i18n = $i18n;
         $this->msVersion = substr(ms_GetVersionInt(), 0, 1);
     }
 
-    public function initFeature($layerId) {
+    public function initFeature($layerId) 
+    {
         $this->forcePrivate = false;
 
         $sqlField = "select field.*,
@@ -174,7 +178,8 @@ class gcFeature {
      * 
      * @return array
      */
-    public function getFeatureData() {
+    public function getFeatureData() 
+    {
         return $this->aFeature;
     }
     
@@ -183,11 +188,13 @@ class gcFeature {
      * 
      * @param array $aFeature
      */
-    public function setFeatureData(array $aFeature) {
+    public function setFeatureData(array $aFeature) 
+    {
         $this->aFeature = $aFeature;
     }
 
-    public function isEditable() {
+    public function isEditable() 
+    {
         if ($this->aFeature['connection_type'] != 6)
             return false;
         if ($this->aFeature['queryable'] != 1)
@@ -199,7 +206,8 @@ class gcFeature {
         return false;
     }
 
-    public function getTinyOWSLayerParams() {
+    public function getTinyOWSLayerParams() 
+    {
         //TODO: così funziona solo per le definizioni DB_NAME/DB_SCHEMA
         list($dbName, $dbSchema) = explode('/', $this->aFeature['catalog_path']);
         return array(
@@ -211,20 +219,24 @@ class gcFeature {
         );
     }
 
-    public function getLayerName() {
+    public function getLayerName() 
+    {
         return $this->aFeature['layer_name'];
     }
 
-    public function isPrivate() {
+    public function isPrivate() 
+    {
         return $this->forcePrivate || ($this->aFeature['private'] > 0);
     }
 
     // Used to force private layer in mapset is private
-    public function setPrivate($private) {
+    public function setPrivate($private) 
+    {
         $this->forcePrivate = $private;
     }
 
-    public function getLayerText($layergroupName, $layergroup) {
+    public function getLayerText($layergroupName, $layergroup) 
+    {
         if (!$this->aFeature)
             return false;
             
@@ -334,89 +346,91 @@ class gcFeature {
         return implode("\n\t", $layText);
     }
 
-    private function _getLayerConnection(&$layText) {
+    private function _getLayerConnection(&$layText) 
+    {
         if ($this->aFeature["layertype_id"] == 10 && !$this->aFeature["tileindex"]) {//TILERASTER
             $layText[] = "TILEINDEX \"" . $this->aFeature["layer_name"] . ".TILEINDEX\"";
             $layText[] = "TILEITEM \"location\"";
         } else {
             switch ($this->aFeature["connection_type"]) {
-                case MS_SHAPEFILE: //Local folder shape and raster
-                    $filePath = $this->aFeature["filePath"];
-                    if (substr($filePath, -1) != "/")
-                        $filePath.="/";
-                    $layText[] = "DATA \"" . $filePath . $this->aFeature["data"] . "\"";
-                    break;
+            case MS_SHAPEFILE: //Local folder shape and raster
+                $filePath = $this->aFeature["filePath"];
+                if (substr($filePath, -1) != "/")
+                    $filePath.="/";
+                $layText[] = "DATA \"" . $filePath . $this->aFeature["data"] . "\"";
+                break;
 
-                case MS_WMS:
-                    $layText[] = "CONNECTIONTYPE WMS";
-                    $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
-                    break;
+            case MS_WMS:
+                $layText[] = "CONNECTIONTYPE WMS";
+                $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
+                break;
 
-                case MS_WFS:
-                    $layText[] = "CONNECTIONTYPE WFS";
-                    $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
-                    break;
+            case MS_WFS:
+                $layText[] = "CONNECTIONTYPE WFS";
+                $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
+                break;
 
-                case MS_POSTGIS:
-                    $layText[] = "CONNECTIONTYPE POSTGIS";
-                    $layText[] = "CONNECTION \"" . $this->aFeature["connection_string"] . "\"";
-                    $sData = $this->_getLayerData();
-                    if (!empty($this->aFeature["data_unique"]))
-                        $sData .= " USING UNIQUE gc_objid";
-                    if (!empty($this->aFeature["data_srid"]))
-                        $sData .= " USING SRID=" . $this->aFeature["data_srid"];
-                    $layText[] = "DATA \"$sData\"";
-                    if (!empty($this->aFeature["data_filter"]))
-                        $layText[] = "FILTER \"" . $this->aFeature["data_filter"] . "\"";
-                    $layText[] = "PROCESSING \"CLOSE_CONNECTION=DEFER\"";
-                    if ($this->aFeature["queryable"] == 1)
-                        $layText[] = "DUMP TRUE";
-                    break;
+            case MS_POSTGIS:
+                $layText[] = "CONNECTIONTYPE POSTGIS";
+                $layText[] = "CONNECTION \"" . $this->aFeature["connection_string"] . "\"";
+                $sData = $this->_getLayerData();
+                if (!empty($this->aFeature["data_unique"]))
+                    $sData .= " USING UNIQUE gc_objid";
+                if (!empty($this->aFeature["data_srid"]))
+                    $sData .= " USING SRID=" . $this->aFeature["data_srid"];
+                $layText[] = "DATA \"$sData\"";
+                if (!empty($this->aFeature["data_filter"]))
+                    $layText[] = "FILTER \"" . $this->aFeature["data_filter"] . "\"";
+                $layText[] = "PROCESSING \"CLOSE_CONNECTION=DEFER\"";
+                if ($this->aFeature["queryable"] == 1)
+                    $layText[] = "DUMP TRUE";
+                break;
 
-                case MS_ORACLESPATIAL:
-                    $layText[] = "CONNECTIONTYPE ORACLESPATIAL";
-                    $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
-                    $sData = $this->_getOracleLayerData();
-                    $using = '';
-                    if (!empty($this->aFeature['data_srid']) || !empty($this->aFeature["data_unique"])) {
-                        $sData .= ' USING ';
-                        if (!empty($this->aFeature["data_unique"])) {
-                            $sData .= ' UNIQUE ' . $this->aFeature["data_unique"];
-                        }
-                        if (!empty($this->aFeature['data_srid'])) {
-                            $sData .= ' SRID ' . $this->aFeature['data_srid'];
-                        }
+            case MS_ORACLESPATIAL:
+                $layText[] = "CONNECTIONTYPE ORACLESPATIAL";
+                $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
+                $sData = $this->_getOracleLayerData();
+                $using = '';
+                if (!empty($this->aFeature['data_srid']) || !empty($this->aFeature["data_unique"])) {
+                    $sData .= ' USING ';
+                    if (!empty($this->aFeature["data_unique"])) {
+                        $sData .= ' UNIQUE ' . $this->aFeature["data_unique"];
                     }
-                    $layText[] = "DATA \"$sData\"";
-                    if (!empty($this->aFeature["data_filter"]))
-                        $layText[] = "FILTER \"" . $this->aFeature["data_filter"] . "\"";
-                    $layText[] = "PROCESSING \"CLOSE_CONNECTION=DEFER\"";
-                    if ($this->aFeature["queryable"] == 1)
-                        $layText[] = "DUMP TRUE";
-                    break;
+                    if (!empty($this->aFeature['data_srid'])) {
+                        $sData .= ' SRID ' . $this->aFeature['data_srid'];
+                    }
+                }
+                $layText[] = "DATA \"$sData\"";
+                if (!empty($this->aFeature["data_filter"]))
+                    $layText[] = "FILTER \"" . $this->aFeature["data_filter"] . "\"";
+                $layText[] = "PROCESSING \"CLOSE_CONNECTION=DEFER\"";
+                if ($this->aFeature["queryable"] == 1)
+                    $layText[] = "DUMP TRUE";
+                break;
 
-                case MS_SDE:
-                    break;
+            case MS_SDE:
+                break;
 
-                case MS_OGR:
-                    $layText[] = "CONNECTIONTYPE OGR";
-                    $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
-                    $layText[] = "DATA \"" . $this->aFeature["data"] . "\"";
-                    if ($this->aFeature["queryable"] == 1)
-                        $layText[] = "DUMP TRUE";
+            case MS_OGR:
+                $layText[] = "CONNECTIONTYPE OGR";
+                $layText[] = "CONNECTION \"" . $this->aFeature["catalog_path"] . "\"";
+                $layText[] = "DATA \"" . $this->aFeature["data"] . "\"";
+                if ($this->aFeature["queryable"] == 1)
+                    $layText[] = "DUMP TRUE";
+                break;
+            case MS_GRATICULE:
+                break;
+            case MS_MYGIS:
+                break;
                     break;
-                case MS_GRATICULE:
-                    break;
-                case MS_MYGIS:
-                    break;
-                    break;
-                case MS_PLUGIN:
-                    break;
+            case MS_PLUGIN:
+                break;
             }
         }
     }
 
-    public function getTileIndexLayer() {
+    public function getTileIndexLayer() 
+    {
         $layText = array();
         $layText[] = "LAYER";
         $layText[] = "\tNAME \"" . $this->aFeature["layer_name"] . ".TILEINDEX\"";
@@ -435,7 +449,8 @@ class gcFeature {
     }
 
     //ritorna la querystring per la feature da usare nel tag DATA del mapfile
-    private function _getOracleLayerData() {
+    private function _getOracleLayerData() 
+    {
         $string = $this->aFeature['data_geom'] . ' FROM ';
         return $string . $this->aFeature['data'];
         // questo sotto non sembra funzionare
@@ -453,7 +468,8 @@ class gcFeature {
      * Construct the DATA statement for the mapfile, http://mapserver.org/mapfile/layer.html
      * @return string
      */
-    private function _getLayerData() {
+    private function _getLayerData() 
+    {
 
         $aFeature = $this->aFeature;
         $datalayerTable = $aFeature["data"];
@@ -562,7 +578,8 @@ class gcFeature {
         return $datalayerTable;
     }
 
-    private function _getMetadata() {
+    private function _getMetadata() 
+    {
         $agmlType = array(1 => "Point", 2 => "Line", 3 => "Polygon", 4 => "Point");
         $ageometryType = array("point" => "point", "multipoint" => "multipoint", "linestring" => "line", "multilinestring" => "multiline", "polygon" => "polygon", "multipolygon" => "multipolygon");
         $metaText = '';
@@ -622,8 +639,9 @@ class gcFeature {
         if (!empty($this->aFeature['hidden']) && $this->aFeature["hidden"] == 1) {
             $aMeta["gc_hide_layer"] = '1';
         }
-        if ($this->forcePrivate ||
-                (!empty($this->aFeature['private']) && $this->aFeature["private"] == 1)) {
+        if ($this->forcePrivate 
+            || (!empty($this->aFeature['private']) && $this->aFeature["private"] == 1)
+        ) {
             $aMeta["gc_private_layer"] = '1';
         }
 
@@ -649,7 +667,8 @@ class gcFeature {
         return $metaText;
     }
 
-    private function _getClassText($aClass) {
+    private function _getClassText($aClass) 
+    {
 
         print_debug($aClass, null, 'classi');
         $clsText = array();
@@ -743,7 +762,8 @@ class gcFeature {
         return implode("\n\t\t", $clsText);
     }
 
-    private function _getStyleText($aStyle) {
+    private function _getStyleText($aStyle) 
+    {
 
         $styText = array();
         if (!empty($aStyle["color"]))
@@ -785,11 +805,12 @@ class gcFeature {
      * 
      * SERVE A MARCO??????
      * 
-     * @param type $layerId
+     * @param  type $layerId
      * @return type
      */
     
-    public function getFeatureField($layerId = null) {
+    public function getFeatureField($layerId = null) 
+    {
         $result = Array();
         if ($layerId)
             $this->init($layerId);
@@ -813,7 +834,8 @@ class gcFeature {
         return $result;
     }
 
-    private function _getMetadataFieldDataType($typeId) {
+    private function _getMetadataFieldDataType($typeId) 
+    {
         if ($typeId == 1 || $typeId == 3)
             return 'Character';
         return false;

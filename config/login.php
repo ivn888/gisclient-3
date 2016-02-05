@@ -1,7 +1,8 @@
 <?php
-require_once(ROOT_PATH.'/lib/gcuser.class.php');
+require_once ROOT_PATH.'/lib/gcuser.class.php';
 
-class GCUser extends AbstractUser {
+class GCUser extends AbstractUser
+{
 }
 
 

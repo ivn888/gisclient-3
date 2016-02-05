@@ -2,7 +2,7 @@
 
 //todo:  aggiungere anche la parte di codice delle formule!!!
 
-include('../../config/config.php');
+require '../../config/config.php';
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
@@ -178,19 +178,23 @@ foreach($layers as $layer) {
         
         //se è usato, lo inserisco se non è già nella teballa field
         if($used) {
-            $fieldExists->execute(array(
+            $fieldExists->execute(
+                array(
                 'layer'=>$layer['layer_id'],
                 'field_name'=>$field
-            ));
+                )
+            );
             $exists = $fieldExists->fetchColumn(0);
             
             if(empty($exists)) {
-                $insertField->execute(array(
+                $insertField->execute(
+                    array(
                     'field_id'=>GCApp::getNewPKey(DB_SCHEMA, DB_SCHEMA, 'field', 'field_id', 1),
                     'layer_id'=>$layer['layer_id'],
                     'field_name'=>$field,
                     'field_header'=>$field,
-                ));
+                    )
+                );
                 echo 'campo '.$field.' di '.$layer['data'].' inserito'."\n";
             } else echo $field.' già inserito'."\n";
         } else echo $field.' non usato '."\n";

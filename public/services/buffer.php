@@ -19,11 +19,11 @@ $db = GCApp::getDB();
 $sql = "select st_astext(st_buffer(st_geomfromtext(:geom, :srid), :buffer))";
 $params = array('geom'=>$_REQUEST['features'], 'srid'=>$srid, 'buffer'=>$_REQUEST['buffer']);
 try {
-	$stmt = $db->prepare($sql);
-	$stmt->execute($params);
-	$bufferedGeoms = $stmt->fetchColumn(0);
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $bufferedGeoms = $stmt->fetchColumn(0);
 } catch(Exception $e) {
-	die(json_encode(array('result'=>'error', 'error'=>'buffer error', 'sql'=>$sql, 'params'=>$params, 'message'=>$e->getMessage())));
+    die(json_encode(array('result'=>'error', 'error'=>'buffer error', 'sql'=>$sql, 'params'=>$params, 'message'=>$e->getMessage())));
 }
 if(empty($bufferedGeoms)) die(json_encode(array('result'=>'error', 'error'=>'empty buffered geoms', 'sql'=>$sql, 'params'=>$params)));
 

@@ -1,7 +1,7 @@
 <?php
-include_once "../../../config/config.php";
-include_once ROOT_PATH.'lib/ajax.class.php';
-include_once ADMIN_PATH.'lib/functions.php';
+require_once "../../../config/config.php";
+require_once ROOT_PATH.'lib/ajax.class.php';
+require_once ADMIN_PATH.'lib/functions.php';
 require_once ROOT_PATH . 'lib/GCService.php';
 
 $gcService = GCService::instance();
@@ -16,7 +16,7 @@ $result = array();
 
 $key = $_REQUEST['key'];
 if(empty($key)) {
-	$ajax->error("parameter 'key' is missing");
+    $ajax->error("parameter 'key' is missing");
 }
 $result['key'] = $key;
 
@@ -37,13 +37,13 @@ $newName = getUniqueFileName(UPLOADED_FILES_PRIVATE_PATH, $newName, $ext);
 $newName = $newName . '.' . $ext;
 
 if(!is_uploaded_file($_FILES[$key]['tmp_name'])) {
-	$ajax->error('error uploading file');
+    $ajax->error('error uploading file');
 }
 
 $filePath = UPLOADED_FILES_PRIVATE_PATH . $newName;
 
 if(!move_uploaded_file($_FILES[$key]['tmp_name'], $filePath)) {
-	$ajax->error("could not move file to {$filePath}");
+    $ajax->error("could not move file to {$filePath}");
 }
 
 $result['name'] = $newName;
@@ -51,7 +51,8 @@ file_put_contents(DEBUG_DIR.'upload.txt', var_export($_REQUEST, true)."\n".var_e
 $ajax->success($result);
 
 $numRec = 0;
-function getUniqueFileName($path, $fileName, $ext) {
+function getUniqueFileName($path, $fileName, $ext) 
+{
     global $numRec;
     if($numRec > 10) throw new Exception('Che cazzo sta succedendo???? '.$path. ' - ' . $fileName);
     $numRec++;

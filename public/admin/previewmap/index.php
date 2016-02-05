@@ -1,5 +1,5 @@
 <?php
-include '../../../config/config.php';
+require '../../../config/config.php';
 require_once ADMIN_PATH."lib/functions.php";
 require_once ADMIN_PATH.'lib/gcFeature.class.php';
 require_once ADMIN_PATH.'lib/gcMapfile.class.php';
@@ -13,13 +13,13 @@ $layergroupId = (int)$_REQUEST['layergroup_id'];
 
 $mapfile = new gcMapfile();
 $mapfile->setTarget("tmp");
-$tmpMap = $mapfile->writeMap("layergroup",$layergroupId);
+$tmpMap = $mapfile->writeMap("layergroup", $layergroupId);
 
 $sql = "select project_name, theme_name, project_srid, xc, yc, max_extent_scale, layergroup_name, layergroup_title, sld ".
-	" from ".DB_SCHEMA.".project ".
-	" inner join ".DB_SCHEMA.".theme using(project_name) ".
-	" inner join ".DB_SCHEMA.".layergroup using(theme_id) ".
-	" where layergroup_id = ?";
+    " from ".DB_SCHEMA.".project ".
+    " inner join ".DB_SCHEMA.".theme using(project_name) ".
+    " inner join ".DB_SCHEMA.".layergroup using(theme_id) ".
+    " where layergroup_id = ?";
 
 $stmt = $db->prepare($sql);
 $stmt->execute(array($layergroupId));
@@ -36,24 +36,24 @@ $layerName = $mapConfig['layergroup_name'];
 $user = new GCUser();
 $user->setAuthorizedLayers(array('theme_name'=>$mapConfig['theme_name']));
 
-$scales = explode(',',SCALE);
+$scales = explode(',', SCALE);
 $resolutions = array();
 foreach($scales as $scale) {
-	if($scale > $mapConfig['max_extent_scale']) continue;
-	array_push($resolutions, $scale / (39.3701*MAP_DPI));
+    if($scale > $mapConfig['max_extent_scale']) continue;
+    array_push($resolutions, $scale / (39.3701*MAP_DPI));
 }
 $maxExtent = array(
-	$mapConfig['xc'] - $resolutions[0] * TILE_SIZE,
-	$mapConfig['yc'] - $resolutions[0] * TILE_SIZE,
-	$mapConfig['xc'] + $resolutions[0] * TILE_SIZE,
-	$mapConfig['yc'] + $resolutions[0] * TILE_SIZE
+    $mapConfig['xc'] - $resolutions[0] * TILE_SIZE,
+    $mapConfig['yc'] - $resolutions[0] * TILE_SIZE,
+    $mapConfig['xc'] + $resolutions[0] * TILE_SIZE,
+    $mapConfig['yc'] + $resolutions[0] * TILE_SIZE
 );
 
 if (!defined('OPENLAYERS')) {
-	// FIXME: handle error in more sensible way
-	// this generates an empty page when display_error = Off
-	// handle like the above error check
-	throw new Exception ("constant OPENLAYERS not defined");
+    // FIXME: handle error in more sensible way
+    // this generates an empty page when display_error = Off
+    // handle like the above error check
+    throw new Exception("constant OPENLAYERS not defined");
 }
 ?><!DOCTYPE HTML><html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -70,7 +70,8 @@ function init() {
 	};
     <?php if(!empty($mapConfig['sld'])) { ?>
     layerParameters.sld = '<?php echo $mapConfig['sld']; ?>';
-    <?php } ?>
+    <?php 
+} ?>
 	
 	if (typeof OpenLayers === 'undefined') {
 		// OpenLayers could not be loaded

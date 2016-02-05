@@ -15,9 +15,9 @@ $img = $smb->createIcon();
 header('Content-type:image/png');
 header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
 header("Cache-Control: post-check=0, pre-check=0", false);
-header ("Pragma: no-cache"); // HTTP/1.0
+header("Pragma: no-cache"); // HTTP/1.0
 if ($img) {
-	echo $img;
+    echo $img;
 } else {
-	readfile(ROOT_PATH.'public/images/warning.png');
+    readfile(ROOT_PATH.'public/images/warning.png');
 }

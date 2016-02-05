@@ -1,6 +1,6 @@
 <?php
 require "../config/config.php";
-include_once ROOT_PATH.'lib/ajax.class.php';
+require_once ROOT_PATH.'lib/ajax.class.php';
 
 $ajax = new GCAjax();
 

@@ -12,14 +12,15 @@ $gcService->startSession();
  * 
  * @param array $data array of array
  */
-function replaceNullWithBlank(array &$data) {
-	foreach($data as $rowNum => $rowData) {
-		foreach($rowData as $colNum => $item) {
-			if (is_null($item)) {
-				$data[$rowNum][$colNum] = '';
-			}
-		}
-	}
+function replaceNullWithBlank(array &$data) 
+{
+    foreach($data as $rowNum => $rowData) {
+        foreach($rowData as $colNum => $item) {
+            if (is_null($item)) {
+                $data[$rowNum][$colNum] = '';
+            }
+        }
+    }
 }
 
 if(empty($_REQUEST['qtrelation_id'])) $ajax->error('Undefined qtrelation_id');

@@ -1,82 +1,82 @@
 <?php
-	
-	include_once "../../config/config.php";
-	error_reporting (E_ERROR | E_PARSE);
+    
+    require_once "../../config/config.php";
+    error_reporting(E_ERROR | E_PARSE);
 
     $db = GCApp::getDB();
     $sql="SELECT project_name FROM ".DB_SCHEMA.".project;";
+try {
+    $ris = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+} catch(Exception $e) {
+    echo "<p>Impossibile eseguire la query : $sql</p>";
+}
+    
+    $opt[]="<option value=\"-1\">Seleziona ===></option>";
+    $opt[]="<option value=\"0\">Tutti</option>";
+for($i=0;$i<count($ris);$i++){
+    $pr=$ris[$i];
+    $opt[]="<option value=\"$pr[project_name]\">$pr[project_name]</option>";
+}
+    $prm=$this->parametri;
+    $pr=$this->parametri["project"];
+if($_POST["livello"]=="qt" && !$_POST["importa"]) {    
+    $sql="SELECT layer_id,layer_name FROM ".DB_SCHEMA.".layergroup INNER JOIN ".DB_SCHEMA.".layer USING(layergroup_id) WHERE theme_id=:theme_id order by layer_name";
+       $stmt = $db->prepare($sql);
     try {
-        $ris = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute(array('theme_id'=>$this->parametri["theme"]));
     } catch(Exception $e) {
         echo "<p>Impossibile eseguire la query : $sql</p>";
     }
-	
-	$opt[]="<option value=\"-1\">Seleziona ===></option>";
-	$opt[]="<option value=\"0\">Tutti</option>";
-	for($i=0;$i<count($ris);$i++){
-		$pr=$ris[$i];
-		$opt[]="<option value=\"$pr[project_name]\">$pr[project_name]</option>";
-	}
-	$prm=$this->parametri;
-	$pr=$this->parametri["project"];
-	if($_POST["livello"]=="qt" && !$_POST["importa"]){	
-		$sql="SELECT layer_id,layer_name FROM ".DB_SCHEMA.".layergroup INNER JOIN ".DB_SCHEMA.".layer USING(layergroup_id) WHERE theme_id=:theme_id order by layer_name";
-        $stmt = $db->prepare($sql);
-        try {
-            $stmt->execute(array('theme_id'=>$this->parametri["theme"]));
-        } catch(Exception $e) {
-            echo "<p>Impossibile eseguire la query : $sql</p>";
-        }
         $ris = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
             
-		for($i=0;$i<count($ris);$i++){
-			$lay=$ris[$i];
-			$opt2[]="<option value=\"$lay[layer_id]\">$lay[layer_name]</option>";
-		}	
-		
-	}
-	
-	if($_POST["importa"]){
-		
-		include_once ADMIN_PATH."lib/export.php";
-		$objId=$_POST["obj_id"];
-		$level=$_POST["level"];
-		$project=$_POST["project"];
-		$livello=$this->livello;
-		$fName=$_POST["filename"];
-		$newName=$_POST["name"];
-		$layer=$_POST["layer"];
-		if($project!=''){
-			$sql="SELECT project_name FROM ".DB_SCHEMA.".project WHERE project_name=:project";
+    for($i=0;$i<count($ris);$i++){
+        $lay=$ris[$i];
+        $opt2[]="<option value=\"$lay[layer_id]\">$lay[layer_name]</option>";
+    }    
+        
+}
+    
+if($_POST["importa"]) {
+        
+    include_once ADMIN_PATH."lib/export.php";
+    $objId=$_POST["obj_id"];
+    $level=$_POST["level"];
+    $project=$_POST["project"];
+    $livello=$this->livello;
+    $fName=$_POST["filename"];
+    $newName=$_POST["name"];
+    $layer=$_POST["layer"];
+    if($project!='') {
+        $sql="SELECT project_name FROM ".DB_SCHEMA.".project WHERE project_name=:project";
             $stmt = $db->prepare($sql);
-            try {
-                $stmt->execute(array('project'=>$project));
-            } catch(Exception $e) {
-                echo "<p>Impossibile eseguire la query : $sql</p>";
-            }
+        try {
+            $stmt->execute(array('project'=>$project));
+        } catch(Exception $e) {
+            echo "<p>Impossibile eseguire la query : $sql</p>";
+        }
             $projectName = $stmt->fetchColumn(0);
-		}
-		else
-			$projectName=$_POST["name"];
-		if (!file_exists(ADMIN_PATH."export/$fName"))
-			$message="File non Esiste.";
-		else{
-			$parentId=Array($objId);
-			if($layer) {
-				$layer=$_POST["layer"];
-				$objId=$_POST["obj_id"];
-			}
-			$error=import(ADMIN_PATH."export/$fName",$objId,$projectName,$newName,$layer);
-			
-			
-			if (!$error) echo "<p>Procedura di importazione Terminata Correttamente.</p>";
-			else{
-				$mex="<ul><li>".implode("</li><li>",$error)."</li></ul>";
-				echo $mex;
-			}
-		}
-	}
+    }
+    else
+    $projectName=$_POST["name"];
+    if (!file_exists(ADMIN_PATH."export/$fName"))
+    $message="File non Esiste.";
+    else{
+        $parentId=Array($objId);
+        if($layer) {
+            $layer=$_POST["layer"];
+            $objId=$_POST["obj_id"];
+        }
+        $error=import(ADMIN_PATH."export/$fName", $objId, $projectName, $newName, $layer);
+            
+            
+        if (!$error) echo "<p>Procedura di importazione Terminata Correttamente.</p>";
+        else{
+            $mex="<ul><li>".implode("</li><li>", $error)."</li></ul>";
+            echo $mex;
+        }
+    }
+}
 ?>
 <div class="tableHeader ui-widget ui-widget-header ui-corner-top">
 	
@@ -90,16 +90,17 @@
 			</SELECT>
 		</td>
 	</tr>-->
-<?php if($_POST["livello"]=="qt"){?>
+<?php if($_POST["livello"]=="qt") {?>
 	<tr>
 		<td class="label ui-widget ui-state-default"><font color="#FFFFFF"><b>Layer</b></font></td>
 		<td colspan="2">
 			<select name="layer" class="textbox">
-				<?php echo @implode('\n',$opt2)?>
+				<?php echo @implode('\n', $opt2)?>
 			</select>
 		</td>
 	</tr>
-<?php }?>
+<?php 
+}?>
 	<tr>
 		<td class="label ui-widget ui-state-default"><font color="#FFFFFF"><b>Nome File</b></font></td>
 		<td valign="middle" colspan="2">

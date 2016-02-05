@@ -1,6 +1,6 @@
 <?php
 if (!file_exists("../config/config.php")) die ("Manca setup");
-include_once "../config/config.php";
+require_once "../config/config.php";
 
 header("Content-Type: text/html; Charset=".CHAR_SET);
 header("Cache-Control: no-cache, must-revalidate, private, pre-check=0, post-check=0, max-age=0");
@@ -21,81 +21,81 @@ if(!empty($_POST['username']) && !empty($_POST['password'])) {
 $db = GCApp::getDB();
 $dbSchema=DB_SCHEMA;
 $sql="SELECT distinct mapset_name,mapset_title,mapset_extent,project_name,template,project_title,private FROM $dbSchema.mapset INNER JOIN $dbSchema.project using(project_name) order by mapset_title,mapset_name;";
-$res = $db->query ($sql);
+$res = $db->query($sql);
 
 $mapset=array();
 while($row = $res->fetch()){
-	$mapset[$row["project_name"]][]=Array("name"=>$row["mapset_name"],
-		"title"=>$row["mapset_title"],"template"=>$row["template"],
-		"extent"=>$row["mapset_extent"],'private'=>$row['private'],
-		'project_title'=>$row["project_title"]);
+    $mapset[$row["project_name"]][]=Array("name"=>$row["mapset_name"],
+    "title"=>$row["mapset_title"],"template"=>$row["template"],
+    "extent"=>$row["mapset_extent"],'private'=>$row['private'],
+    'project_title'=>$row["project_title"]);
 }
 
 $newTable = '';
 foreach($mapset as $key=>$map){
-	$newTable.='
+    $newTable.='
 		<div>
 			<div class="tableHeader ui-widget ui-widget-header ui-corner-top">'.GCAuthor::t('project').': '.$map[0]['project_title'].'</div>
 			<table class="stiletabella">';
-				for($j=0;$j<count($map);$j++){
-					if(!isset($_SESSION["USERNAME"]) && $map[$j]['private'] == 1) {
-						continue;
-					}
-					
-					$publicLink = MAP_URL;
-					if(!empty($map[$j]['template'])){
-						$publicLink .= $map[$j]['template'];
-					}
-					$separator = strpos($publicLink, '?')?'&':'?';
-					$publicLink .= $separator.'mapset='.$map[$j]['name'];
-					
-					if (defined('PRIVATE_MAP_URL')) {
-						$privateLink = PRIVATE_MAP_URL;
-						if(!empty($map[$j]['template'])){
-							$privateLink .= $map[$j]['template'];
-						}
-						$separator = strpos($privateLink, '?')?'&':'?';
-						$privateLink .= $separator.'mapset='.$map[$j]['name'];
-					}
-					
-					$newTable.='
+    for($j=0;$j<count($map);$j++){
+        if(!isset($_SESSION["USERNAME"]) && $map[$j]['private'] == 1) {
+            continue;
+        }
+                    
+        $publicLink = MAP_URL;
+        if(!empty($map[$j]['template'])) {
+            $publicLink .= $map[$j]['template'];
+        }
+        $separator = strpos($publicLink, '?')?'&':'?';
+        $publicLink .= $separator.'mapset='.$map[$j]['name'];
+                    
+        if (defined('PRIVATE_MAP_URL')) {
+            $privateLink = PRIVATE_MAP_URL;
+            if(!empty($map[$j]['template'])) {
+                $privateLink .= $map[$j]['template'];
+            }
+            $separator = strpos($privateLink, '?')?'&':'?';
+            $privateLink .= $separator.'mapset='.$map[$j]['name'];
+        }
+                    
+        $newTable.='
 						<tr>';
-					if(empty($map[$j]['private'])) {
-						$newTable .= '<td width="1"><a href="'.$publicLink.'" class="view" target="_blank">Public map</a></td>';
-					} else {
-						$newTable .= '<td width="1"></td>';
-					}
-					if(!empty($_SESSION['USERNAME']) && defined('PRIVATE_MAP_URL')) $newTable .= '
+        if(empty($map[$j]['private'])) {
+            $newTable .= '<td width="1"><a href="'.$publicLink.'" class="view" target="_blank">Public map</a></td>';
+        } else {
+            $newTable .= '<td width="1"></td>';
+        }
+        if(!empty($_SESSION['USERNAME']) && defined('PRIVATE_MAP_URL')) $newTable .= '
 						<td width="1"><a href="'.$privateLink.'" class="private" target="_blank">Private map</a></td>';
-					$newTable .= '					
+        $newTable .= '					
 							<td class="data">'.$map[$j]["title"].'</td>
 						</tr>';
-				}
-			$newTable.='
+    }
+    $newTable.='
 			</table>
 		</div>
 	';
 }
 
-if(!$user->isAuthenticated()){
-	$logTitle="Login";
-	$logJs="javascript:return encript_pwd('password','frm_enter');";
-	$logout=0;
-	$btn="Login";
-	$usrEnabled="";
-	$pwdEnabled="";
+if(!$user->isAuthenticated()) {
+    $logTitle="Login";
+    $logJs="javascript:return encript_pwd('password','frm_enter');";
+    $logout=0;
+    $btn="Login";
+    $usrEnabled="";
+    $pwdEnabled="";
 }
 else{
-	if(!empty($_REQUEST['to'])) {
-		header('Location: '.$_REQUEST['to']);
-		die();
-	}
-	$logTitle="Logout";
-	$logJs="";
-	$logout=1;
-	$btn="Esci";
-	$usrEnabled="disabled";
-	$pwdEnabled="disabled";
+    if(!empty($_REQUEST['to'])) {
+        header('Location: '.$_REQUEST['to']);
+        die();
+    }
+    $logTitle="Logout";
+    $logJs="";
+    $logout=1;
+    $btn="Esci";
+    $usrEnabled="disabled";
+    $pwdEnabled="disabled";
 }
 ?>
 <!DOCTYPE HTML>
@@ -146,24 +146,24 @@ else{
 <body>
 <div id="container">
 	<div class="ui-layout-north">
-		<?php include ADMIN_PATH."inc/inc.admin.page_header.php"; ?>
+    <?php require ADMIN_PATH."inc/inc.admin.page_header.php"; ?>
 	</div>
 	<div class="ui-layout-center">
 		<h2><?php echo GCAuthor::t('List of available Maps'); ?></h2>
-		<?php echo $newTable;?>
+    <?php echo $newTable;?>
 	</div>
 	<div class="ui-layout-east" id="container_login2">
 		<h2><?php echo $logTitle;?></h2>
 		<form action="<?php echo $_SERVER["PHP_SELF"]?>" method="post" class="riquadro" id="frm_enter" onsubmit="">
-			<?php
-			/*
-			messaggio di errore login?
+    <?php
+    /*
+    messaggio di errore login?
 			
-			<div class="formRow">
+    <div class="formRow">
 				<label>&nbsp;</label>
 				<?php if (isset($message)) echo "<span class=\"alert\">".$message."</span>";?>
-			</div>*/
-			?>
+    </div>*/
+    ?>
 			<div class="formRow">
 				<label><?php echo GCAuthor::t('Username'); ?>:</label>
 				<input name="username" type="text" id="username" value="" tabindex=1 <?php echo $usrEnabled?>>

@@ -27,14 +27,14 @@ if($save->status==1 && $_POST["dati"]["legendtype_id"]==2 && $_FILES["legend_ico
 	if($p->errors["legend_icon"]) echo $p->errors["legend_icon"];
 }
 else*/
-if(!$save->hasErrors && $save->action=="salva"){
-	if($_POST["dati"]["legendtype_id"]!=0){
-		require_once ADMIN_PATH."lib/gcSymbol.class.php";
-		$smb=new Symbol("class");
-		$smb->table='class';
-		$smb->filter="class.class_id=".$p->parametri[$p->livello];
-		$smb->createIcon();
-	}
+if(!$save->hasErrors && $save->action=="salva") {
+    if($_POST["dati"]["legendtype_id"]!=0) {
+        include_once ADMIN_PATH."lib/gcSymbol.class.php";
+        $smb=new Symbol("class");
+        $smb->table='class';
+        $smb->filter="class.class_id=".$p->parametri[$p->livello];
+        $smb->createIcon();
+    }
 
 }
 

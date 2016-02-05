@@ -7,31 +7,37 @@
 				<div id="clientLogo" class="shadow">
 					<?php if(defined('CLIENT_LOGO') && CLIENT_LOGO != null) { ?>
 						<img src="<?php echo CLIENT_LOGO ?>" height="60">
-					<?php } else { ?>
+        <?php 
+} else { ?>
 						Logo Cliente
-					<?php } ?>
+        <?php 
+} ?>
 				</div>
 				<div id="topMenu">
-					<?php if ($user->isAuthenticated()) { ?>
-						<?php if(!empty($isAuthor)) { ?>
+        <?php if ($user->isAuthenticated()) { ?>
+        <?php if(!empty($isAuthor)) { ?>
 						<a class="button" href="../">Home</a>
 						<a class="button" data-action="data_manager" style="display:none;">Data manager</a>
 						<a class="button" data-action="preview_map" style="display:none;">Preview Map</a>
-						<?php if($user->isAdmin()) { ?>
+        <?php if($user->isAdmin()) { ?>
 						<a class="button" data-action="options">Options</a> 
 						<a class="button" data-action="symbology"><?php echo GCAuthor::t('symbology'); ?></a>
-						<?php } ?>
+        <?php 
+} ?>
 						<a class="button" data-action="ogc_services" style="display:none;"><?php echo GCAuthor::t('ogc_services'); ?></a>
                         <?php 
                         if(!empty($p->parametri['project'])) {
                             echo '<a class="button" data-action="mapfiles_manager">'.GCAuthor::t('online_maps').'</a>';
                         }
                         ?>
-						<?php } else { ?>
+        <?php 
+} else { ?>
 						<a class="button" href="admin/">Author</a>
-						<?php } ?>
+        <?php 
+} ?>
 						<a class="logout" href="#" onclick="javascript:logout()">LogOut</a>
-					<?php } ?>
+        <?php 
+} ?>
 				</div>
 			</div>
 			<div id="list_dialog" style="display:none;"><table></table></div>
@@ -48,37 +54,38 @@
 			<div id="ogc_services_getcapabilities" style="display:none;" data-title="<?php echo GCAuthor::t('ogc_services'); ?>">
 				<table border="1" cellpadding="3" class="stiletabella">
 					<tr class="ui-widget ui-state-default"><th>Mapset</th><th>WMS</th><th>WFS</th></tr>
-					<?php
-					if(isset($mapsets)) {
-						foreach($mapsets as $mapset) {
-							echo '<tr>
+        <?php
+        if(isset($mapsets)) {
+            foreach($mapsets as $mapset) {
+                echo '<tr>
 								<td>'.$mapset['mapset_title'].' ('.$mapset['mapset_name'].')</td>
 								<td><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WMS&version=1.1.1" data-action="getcapabilities" target="_blank">WMS GetCapabilities</a></td>
 								<td><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WFS" data-action="getcapabilities" target="_blank">WFS GetCapabilities</a></td>
 							</tr>';
-						}
-					}
-					?>
+            }
+        }
+        ?>
 				</table>
 				<?php if(defined('TINYOWS_PATH')) { ?>
 				<br><br>
 				<table border="1" cellpadding="3" class="stiletabella">
 				<tr class="ui-widget ui-state-default"><th><?php echo GCAuthor::t('theme'); ?></th><th><?php echo GCAuthor::t('layergroup'); ?></th><th><?php echo GCAuthor::t('layer'); ?></th><th>FeatureType</th><th>WFS-T</th></tr>
 				<?php
-					if(isset($towsFeatures)) {
-						foreach($towsFeatures as $towsf) {
-							echo '<tr>
+    if(isset($towsFeatures)) {
+        foreach($towsFeatures as $towsf) {
+            echo '<tr>
 								<td>'.$towsf['theme_title'].'</td>
 								<td>'.$towsf['layergroup_title'].'</td>
 								<td>'.$towsf['layer_title'].'</td>
 								<td>'.$towsf['feature_type'].'</td>
 								<td><a href="'.TINYOWS_ONLINE_RESOURCE.$towsf['project_name'].'/'.$towsf['feature_type'].'/?service=wfs&request=getcapabilities" data-action="getcapabilities" target="_blank">WFS-T</A></td>
 							</tr>';
-						}
-					}
-				?>
+        }
+    }
+                ?>
 				</table>
-				<?php } ?>
+				<?php 
+} ?>
 			</div>
 			
 			<div id="dialog_symbology" style="display:none;" data-title="<?php echo GCAuthor::t('symbology'); ?>">
@@ -124,17 +131,17 @@
 				</tr>
 				<tr><td><b><?php echo GCAuthor::t('all') ?></b></td><td></td><td style="text-align:center;"><a href="#" data-action="refresh" data-target="tmp" data-mapset=""><?php echo GCAuthor::t('update') ?></a></td><td style="text-align:center;"><a href="#" data-action="refresh" data-target="public" data-mapset=""><?php echo GCAuthor::t('update'); ?></a></td></tr>
 				<?php
-				if(isset($mapsets)) {
-					foreach($mapsets as $mapset) {
-						echo '<tr>
+    if(isset($mapsets)) {
+        foreach($mapsets as $mapset) {
+            echo '<tr>
 							<td>'.$mapset['mapset_title'].' ('.$mapset['mapset_name'].')</td>
 							<td></td>
 							<td style="text-align:center;"><a data-action="view_map" href="'.$mapset['url'].'&tmp=1" target="_blank">Map</a><a href="#" data-action="refresh" data-target="tmp" data-mapset="'.$mapset['mapset_name'].'">'.GCAuthor::t('update').'</a></td>
 							<td style="text-align:center;"><a data-action="view_map" href="'.$mapset['url'].'" target="_blank">Map</a><a href="#" data-action="refresh" data-target="public" data-mapset="'.$mapset['mapset_name'].'">'.GCAuthor::t('update').'</a></td>
 						</tr>';
-					}
-				}
-				?>
+        }
+    }
+                ?>
 				</table>
 			</div>
 			<!-- TODO: allineare verticalmente, cosi è bruttino -->

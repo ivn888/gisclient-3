@@ -1,13 +1,15 @@
 <?php
 
-class HttpUtils {
+class HttpUtils
+{
 
-    static public function post($url, $postParams, $cookieFile = NULL) {
+    static public function post($url, $postParams, $cookieFile = null) 
+    {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postParams);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		// curl_setopt($ch, CURLOPT_HEADER, true);
+        // curl_setopt($ch, CURLOPT_HEADER, true);
         if (!is_null($cookieFile)) {
             curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
             curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
@@ -18,10 +20,11 @@ class HttpUtils {
         return array($httpStatus, $result);
     }
 
-    static public function get($url, $cookieFile = NULL) {
+    static public function get($url, $cookieFile = null) 
+    {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		
+        
         if (!is_null($cookieFile)) {
             curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
             curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
@@ -32,7 +35,8 @@ class HttpUtils {
         return array($httpStatus, $result);
     }
 
-    static public function put($url, $data, $cookieFile = NULL) {
+    static public function put($url, $data, $cookieFile = null) 
+    {
         $fh = fopen('php://memory', 'rw');
         fwrite($fh, $data);
         rewind($fh);
