@@ -1,11 +1,16 @@
 <!-- ### STANDARD  PAGE  HEADER  INIZIO ##################################################### -->
             <div id="intestazione">
                 <div id="gisClientAuthorLogo">
-                    <b class="shadow">GisClient</b><strong class="color">Author</strong>
+                                        <?php if(defined('AUTHOR_LOGO') && AUTHOR_LOGO != null) { ?>
+                        <?php echo AUTHOR_LOGO ?>
+                    <?php } else { ?>
+                        <b class="shadow">GisClient</b><strong class="color">Author</strong>
+                    <?php } ?>
+                    
                     
                 </div>
                 <div id="clientLogo" class="shadow">
-                    <?php if (defined('CLIENT_LOGO') && CLIENT_LOGO != null) { ?>
+                    <?php if(defined('CLIENT_LOGO') && CLIENT_LOGO != null) { ?>
                         <img src="<?php echo CLIENT_LOGO ?>" height="60">
                     <?php } else { ?>
                         Logo Cliente
@@ -13,17 +18,17 @@
                 </div>
                 <div id="topMenu">
                     <?php if ($user->isAuthenticated()) { ?>
-                        <?php if (!empty($isAuthor)) { ?>
+                        <?php if(!empty($isAuthor)) { ?>
                         <a class="button" href="../">Home</a>
                         <a class="button" data-action="data_manager" style="display:none;">Data manager</a>
                         <a class="button" data-action="preview_map" style="display:none;">Preview Map</a>
-                        <?php if ($user->isAdmin()) { ?>
+                        <?php if($user->isAdmin()) { ?>
                         <a class="button" data-action="options">Options</a> 
                         <a class="button" data-action="symbology"><?php echo GCAuthor::t('symbology'); ?></a>
                         <?php } ?>
                         <a class="button" data-action="ogc_services" style="display:none;"><?php echo GCAuthor::t('ogc_services'); ?></a>
-                        <?php
-                        if (!empty($p->parametri['project'])) {
+                        <?php 
+                        if(!empty($p->parametri['project'])) {
                             echo '<a class="button" data-action="mapfiles_manager">'.GCAuthor::t('online_maps').'</a>';
                         }
                         ?>
@@ -39,8 +44,8 @@
             <div id="preview_map_dialog" style="display:none;"></div>
             <div id="options_dialog" style="display:none;">
                 <form id="user_options">
-                <input type="checkbox" name="save_to_tmp_map" <?php if (isset($_SESSION['save_to_tmp_map']) && $_SESSION['save_to_tmp_map']) echo 'checked="checked"'; ?> value="1"> <?php echo GCAuthor::t('save_to_temp') ?><br />
-                <input type="checkbox" name="auto_refresh_mapfiles" <?php if (isset($_SESSION['auto_refresh_mapfiles']) && $_SESSION['auto_refresh_mapfiles']) echo 'checked="checked"'; ?> value="1"> <?php echo GCAuthor::t('auto_refresh_mapfiles') ?><br />
+                <input type="checkbox" name="save_to_tmp_map" <?php if(isset($_SESSION['save_to_tmp_map']) && $_SESSION['save_to_tmp_map']) echo 'checked="checked"'; ?> value="1"> <?php echo GCAuthor::t('save_to_temp') ?><br />
+                <input type="checkbox" name="auto_refresh_mapfiles" <?php if(isset($_SESSION['auto_refresh_mapfiles']) && $_SESSION['auto_refresh_mapfiles']) echo 'checked="checked"'; ?> value="1"> <?php echo GCAuthor::t('auto_refresh_mapfiles') ?><br />
                 <button name="save"><?php echo GCAuthor::t('save'); ?></button>
                 <div class="logs" style="color:red;"></div>
                 </form>
@@ -49,58 +54,32 @@
                 <table border="1" cellpadding="3" class="stiletabella">
                     <tr class="ui-widget ui-state-default"><th>Mapset</th><th>WMS</th><th>WFS</th></tr>
                     <?php
-                    if (isset($mapsets)) {
-                        foreach ($mapsets as $mapset) {
+                    if(isset($mapsets)) {
+                        foreach($mapsets as $mapset) {
                             echo '<tr>
                                 <td>'.$mapset['mapset_title'].' ('.$mapset['mapset_name'].')</td>
-                                <td align="center"><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WMS&version=1.1.1" data-action="getcapabilities" target="_blank">WMS GetCapabilities</a></td>
-                                <td align="center"><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WFS" data-action="getcapabilities" target="_blank">WFS GetCapabilities</a></td>
+                                <td><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WMS&version=1.1.1" data-action="getcapabilities" target="_blank">WMS GetCapabilities</a></td>
+                                <td><a href="../services/ows.php?project='.$mapset['project_name'].'&map='.$mapset['mapset_name'].'&request=getcapabilities&service=WFS" data-action="getcapabilities" target="_blank">WFS GetCapabilities</a></td>
                             </tr>';
                         }
                     }
                     ?>
                 </table>
-                <?php 
-                    $showSingleWmsLayers = defined('ENABLE_OGC_SINGLE_LAYER_WMS') && ENABLE_OGC_SINGLE_LAYER_WMS === true;
-                    $showWfstLayers = defined('TINYOWS_PATH');
-                    
-                    if ($showSingleWmsLayers || $showWfstLayers) { 
-                ?>
+                <?php if(defined('TINYOWS_PATH')) { ?>
                 <br><br>
                 <table border="1" cellpadding="3" class="stiletabella">
-                
-                <tr class="ui-widget ui-state-default">
-                    <th><?php echo GCAuthor::t('theme'); ?></th>
-                    <th><?php echo GCAuthor::t('layergroup'); ?></th>
-                    <th><?php echo GCAuthor::t('layer'); ?></th>
-                    <th><?php echo GCAuthor::t('FeatureType'); ?></th>
-                    <th nowrap><?php if ($showWfstLayers)             echo GCAuthor::t('WFS-T'); ?>&nbsp;</th>
-                    <th nowrap>&nbsp;<?php if ($showSingleWmsLayers)  echo GCAuthor::t('WMS'); ?></th>
-                </tr>
+                <tr class="ui-widget ui-state-default"><th><?php echo GCAuthor::t('theme'); ?></th><th><?php echo GCAuthor::t('layergroup'); ?></th><th><?php echo GCAuthor::t('layer'); ?></th><th>FeatureType</th><th>WFS-T</th></tr>
                 <?php
-                    foreach ($layerList as $layer) {
-                        if (!$showSingleWmsLayers && !$layer['is_wfst']) {
-                            continue;
+                    if(isset($towsFeatures)) {
+                        foreach($towsFeatures as $towsf) {
+                            echo '<tr>
+                                <td>'.$towsf['theme_title'].'</td>
+                                <td>'.$towsf['layergroup_title'].'</td>
+                                <td>'.$towsf['layer_title'].'</td>
+                                <td>'.$towsf['feature_type'].'</td>
+                                <td><a href="'.TINYOWS_ONLINE_RESOURCE.$towsf['project_name'].'/'.$towsf['feature_type'].'/?service=wfs&request=getcapabilities" data-action="getcapabilities" target="_blank">WFS-T</A></td>
+                            </tr>';
                         }
-                        if (!$showWfstLayers && !$layer['is_wms']) {
-                            continue;
-                        }
-                        echo "<tr>\n";
-                        echo "<td>{$layer['theme_title']}</td>\n";
-                        echo "<td>{$layer['layergroup_title']}</td>\n";
-                        echo "<td>{$layer['layer_title']}</td>\n";
-                        echo "<td>{$layer['feature_type']}</td>";
-                        if ($showWfstLayers && $layer['is_wfst']) {
-                            echo "<td align=\"center\"><a href=\"" . TINYOWS_ONLINE_RESOURCE . "{$layer['project_name']}/{$layer['feature_type']}/?service=wfs&request=getcapabilities\" data-action=\"getcapabilities\" target=\"_blank\">WFS-T GetCapabilities</A></td>\n";
-                        } else {
-                            echo "<td></td>\n";
-                        }
-                        if ($showSingleWmsLayers && $layer['is_wms']) {
-                            echo "<td align=\"center\"><a href=\"../services/ows.php?project={$mapset['project_name']}&map=layer.{$layer['feature_type']}&request=getcapabilities&service=WMS&version=1.1.1\" data-action=\"getcapabilities\" target=\"_blank\">WMS GetCapabilities</a></td>\n";
-                        } else {
-                            echo "<td></td>\n";
-                        }    
-                        echo "</tr>";
                     }
                 ?>
                 </table>
@@ -132,7 +111,7 @@
                         <li>Se il campo nome è popolato il carattere verrà importato e sostituito.</li>
                     </ol>
                     <input id="loadFont" type="file" accept=".ttf"><button onclick="fontLoadList()">Carica</button>
-                    <a target="_blank" href="getFont.php?font=r3-map-symbols.ttf" class="button">Scarica Attuale</a>
+                    <button onclick="downloadFont()">Scarica Attuale</button>
                     <a target="_blank" href="getFont.php?font=r3-map-symbols_tpl.ttf" class="button">Scarica Template</a>
                     <h2>Simboli font (TTF)</h2>
                     <table border="1" cellpadding="3" class="stiletabella" id="glyfList"></table>
@@ -150,8 +129,8 @@
                 </tr>
                 <tr><td><b><?php echo GCAuthor::t('all') ?></b></td><td></td><td style="text-align:center;"><a href="#" data-action="refresh" data-target="tmp" data-mapset=""><?php echo GCAuthor::t('update') ?></a></td><td style="text-align:center;"><a href="#" data-action="refresh" data-target="public" data-mapset=""><?php echo GCAuthor::t('update'); ?></a></td></tr>
                 <?php
-                if (isset($mapsets)) {
-                    foreach ($mapsets as $mapset) {
+                if(isset($mapsets)) {
+                    foreach($mapsets as $mapset) {
                         echo '<tr>
                             <td>'.$mapset['mapset_title'].' ('.$mapset['mapset_name'].')</td>
                             <td></td>
@@ -171,12 +150,11 @@
                         <li><a href="#import_dialog_raster">Raster</a></li>
                         <li><a href="#import_dialog_postgis">PostgreSQL</a></li>
                         <li><a href="#import_dialog_xls">XLS</a></li>
-                        <li style="display:none"><a href="#import_dialog_csv">CSV</a></li>
-                        <li><a href="#import_dialog_doc">Doc</a></li>
+                        <!-- <li><a href="#import_dialog_csv">CSV</a></li> -->
                     </ul>
                     <div id="import_dialog_shp">
-                        <input id="shp_file_upload" name="file_upload" type="file" multiple="multiple" accept=".shp, .shx, .dbf" />
-                        <progress id="progress_shp" value="" max="" style="display:none;"></progress>
+                        <span class="flash_is_missing_message" class="alert_message" style="color:red; background-color:#d0d0d0; padding: 5px; display:none">Flash is not installed, but required for file upload</span><br />
+                        <input id="shp_file_upload" name="file_upload" type="file" />
                         <div data-role="file_list">
                         </div>
                         <hr>
@@ -189,8 +167,8 @@
                     </div>
                     <div id="import_dialog_raster">
                         Directory: <input type="text" name="dir_name"><br />
-                        <input id="raster_file_upload" name="file_upload" type="file" multiple="multiple" accept=".tif, .tiff, .tfw, .ecw, .jpg, .jpeg, .jgw, .png, .pgw, .gif, .gfw"/>
-                        <progress id="progress_raster" value="" max="" style="display:none;"></progress>
+                        <span class="flash_is_missing_message" class="alert_message" style="color:red; background-color:#d0d0d0; padding: 5px; display:none">Flash is not installed, but required for file upload</span><br />
+                        <input id="raster_file_upload" name="file_upload" type="file" />
                         <div data-role="file_list">
                         </div>
                         <hr>
@@ -222,8 +200,8 @@
                         <button name="create_table">Create</button>
                     </div>
                     <div id="import_dialog_xls">
-                        <input id="xls_file_upload" name="file_upload" type="file" multiple="multiple" accept=".xls, .xlsx" />
-                        <progress id="progress_xls" value="" max="" style="display:none;"></progress>
+                        <span class="flash_is_missing_message" class="alert_message" style="color:red; background-color:#d0d0d0; padding: 5px; display:none">Flash is not installed, but required for file upload</span><br />
+                        <input id="xls_file_upload" name="file_upload" type="file" />
                         <div data-role="file_list">
                         </div>
                         <hr>
@@ -232,10 +210,10 @@
                         Tablename: <select name="xls_table_name_select" style="display:none;"></select><input type="text" name="xls_table_name"><br />
                         <button name="import" style="display:none">Import</button>
                     </div>
-                    
+                    <!--
                     <div id="import_dialog_csv">
+                        <span class="flash_is_missing_message" class="alert_message" style="color:red; background-color:#d0d0d0; padding: 5px; display:none">Flash is not installed, but required for file upload</span><br />
                         <input id="csv_file_upload" name="file_upload" type="file" />
-                        <progress id="progress_csv" value="" max="" style="display:none;"></progress>
                         <div data-role="file_list">
                         </div>
                         <hr>
@@ -244,20 +222,7 @@
                         Tablename: <select name="csv_table_name_select" style="display:none;"></select><input type="text" name="csv_table_name"><br />
                         <button name="import" style="display:none">Import</button>
                     </div>
-                    
-                    <div id="import_dialog_doc">
-                        Select import folder <br>
-                        <input id="doc_file_upload" name="file_upload" type="file" multiple="multiple" />
-                        <progress id="progress_doc" value="" max="" style="display:none;"></progress>
-                        <hr>
-                        <div id="fs_list" data-role="fs_list">
-                        </div>
-                        <hr>
-                        <div id="doc_new_folder" style="display:none;">
-                            New folder: <input type="text" name="doc_folder_name">
-                            <button name="create_folder">Create</button>
-                        </div>
-                    </div>
+                    -->
                 </div>
                 <div class="logs" style="color:red;" tabindex="100">
                 </div>

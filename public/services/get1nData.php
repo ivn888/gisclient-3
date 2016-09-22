@@ -13,48 +13,48 @@ $gcService->startSession();
  * @param array $data array of array
  */
 function replaceNullWithBlank(array &$data) {
-	foreach($data as $rowNum => $rowData) {
-		foreach($rowData as $colNum => $item) {
-			if (is_null($item)) {
-				$data[$rowNum][$colNum] = '';
-			}
-		}
-	}
+    foreach($data as $rowNum => $rowData) {
+        foreach($rowData as $colNum => $item) {
+            if (is_null($item)) {
+                $data[$rowNum][$colNum] = '';
+            }
+        }
+    }
 }
+
+if(empty($_REQUEST['qt_relation_id'])) $ajax->error('Undefined qt_relation_id');
+if(empty($_REQUEST['f_key_value'])) $ajax->error('Undefined f_key_value');
 
 $ajax = new GCAjax();
 $db = GCApp::getDB();
 
-if(empty($_REQUEST['relation_id'])) $ajax->error('Undefined relation_id');
-if(empty($_REQUEST['f_key_value'])) $ajax->error('Undefined f_key_value');
-
-$sql = 'select relation_id, catalog.catalog_id, catalog_path, relation_name, relationtype_id, data_field_1, table_name, table_field_1, layer_id, layer.data as layer_table
-    from '.DB_SCHEMA.'.relation inner join '.DB_SCHEMA.'.catalog using(catalog_id) inner join '.DB_SCHEMA.'.layer using(layer_id) where relation_id = :relation_id';
+$sql = 'select qt_relation_id, catalog.catalog_id, catalog_path, qtrelation_name, qtrelationtype_id, data_field_1, table_name, table_field_1, layer_id, layer.data as layer_table
+    from '.DB_SCHEMA.'.qtrelation inner join '.DB_SCHEMA.'.catalog using(catalog_id) inner join '.DB_SCHEMA.'.layer using(layer_id) where qt_relation_id = :qt_relation_id';
 
 $stmt = $db->prepare($sql);
-$stmt->execute(array('relation_id'=>$_REQUEST['relation_id']));
-$relation = $stmt->fetch(PDO::FETCH_ASSOC);
-if(empty($relation)) $ajax->error('Invalid relation_id');
+$stmt->execute(array('qt_relation_id'=>$_REQUEST['qt_relation_id']));
+$qtRelation = $stmt->fetch(PDO::FETCH_ASSOC);
+if(empty($qtRelation)) $ajax->error('Invalid qt_relation_id');
 
-$sql = 'select field_name, field_header, relation_id from '.DB_SCHEMA.'.field where searchtype_id not in (4,5) and relation_id in (0, '.$relation['relation_id'].') and layer_id = '.$relation['layer_id'];
+$sql = 'select qtfield_name, field_header, qt_relation_id from '.DB_SCHEMA.'.qtfield where searchtype_id not in (4,5) and qt_relation_id in (0, '.$qtRelation['qt_relation_id'].') and layer_id = '.$qtRelation['layer_id'];
 $fields = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 if(empty($fields)) $ajax->error('No fields defined');
 
 $fieldsName = array();
-foreach($fields as $field) array_push($fieldsName, 't_'.$field['relation_id'].'.'.$field['field_name']);
+foreach($fields as $field) array_push($fieldsName, 't_'.$field['qt_relation_id'].'.'.$field['qtfield_name']);
 
-$sql = 'select catalog_path from '.DB_SCHEMA.'.layer inner join '.DB_SCHEMA.'.catalog using(catalog_id) where layer_id = '.$relation['layer_id'];
+$sql = 'select catalog_path from '.DB_SCHEMA.'.layer inner join '.DB_SCHEMA.'.catalog using(catalog_id) where layer_id = '.$qtRelation['layer_id'];
 $layerCatalogPath = $db->query($sql)->fetchColumn(0);
 
 $layerDataDb = GCApp::getDataDB($layerCatalogPath);
 $layerSchema = GCApp::getDataDBSchema($layerCatalogPath);
-$relationDataDb = GCApp::getDataDB($relation['catalog_path']);
-$relationSchema = GCApp::getDataDBSchema($relation['catalog_path']);
+$relationDataDb = GCApp::getDataDB($qtRelation['catalog_path']);
+$relationSchema = GCApp::getDataDBSchema($qtRelation['catalog_path']);
 
-$layerTable = $relation['layer_table'];
-$relationTable = $relation['table_name'];
+$layerTable = $qtRelation['layer_table'];
+$relationTable = $qtRelation['table_name'];
 
-$sql = 'select '.implode(', ', $fieldsName).' from '.$layerSchema.'.'.$layerTable.' as t_0 left join '.$relationSchema.'.'.$relationTable.' as t_'.$relation['relation_id'].'  on t_'.$relation['relation_id'].'.'.$relation['table_field_1'].' = t_0.'.$relation['data_field_1'].' where t_0.'.$relation['data_field_1'].' = :value';
+$sql = 'select '.implode(', ', $fieldsName).' from '.$layerSchema.'.'.$layerTable.' as t_0 left join '.$relationSchema.'.'.$relationTable.' as t_'.$qtRelation['qt_relation_id'].'  on t_'.$qtRelation['qt_relation_id'].'.'.$qtRelation['table_field_1'].' = t_0.'.$qtRelation['data_field_1'].' where t_0.'.$qtRelation['data_field_1'].' = :value';
 
 $stmt = $layerDataDb->prepare($sql);
 
